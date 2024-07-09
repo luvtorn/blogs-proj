@@ -20,8 +20,6 @@ const ProfilePage = () => {
     enabled: !!id,
   });
 
-  console.log(data);
-
   const handleChange = userStore.changeUserInfo({
     id: Number(data?.[0].user_id),
     navigate,
@@ -48,11 +46,11 @@ const ProfilePage = () => {
             )}
             <div className="image-container">
               <img
-                src={`http://localhost:5000/${
-                  data?.[0].avatar_url !== null
-                    ? data?.[0].avatar_url
+                src={
+                  data?.[0].avatar_url
+                    ? `http://localhost:5000/${data?.[0].avatar_url}`
                     : "/avatar.svg"
-                }`}
+                }
                 alt="Avatar"
               />
             </div>
@@ -77,6 +75,7 @@ const ProfilePage = () => {
                       blogId: blog.id,
                       time: blog.created_at,
                       avatar_url: data?.[0].avatar_url,
+                      tags: blog.tags,
                     }}
                   />
                 ))

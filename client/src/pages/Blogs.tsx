@@ -6,6 +6,7 @@ import Users from "../components/Users";
 import { useQuery } from "@tanstack/react-query";
 import { blogService } from "../services/Blog.service";
 import useAuth from "../hooks/useAuth";
+import { blogStore } from "../stores/BlogStore";
 
 const Blogs = () => {
   const { getBlogs } = blogService;
@@ -15,6 +16,8 @@ const Blogs = () => {
     queryFn: () => getBlogs(),
     select: (data) => data,
   });
+
+  console.log(data);
 
   useAuth();
 
@@ -28,6 +31,7 @@ const Blogs = () => {
               key={blog.blog_id}
               blog={{
                 title: blog.title,
+                tags: blog.tags,
                 author: blog.username,
                 authorId: blog.user_id,
                 blogId: blog.blog_id,

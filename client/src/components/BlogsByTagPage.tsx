@@ -5,16 +5,17 @@ import Header from "./Header";
 import Blog from "./Blog";
 import Tags from "./Tags";
 import Users from "./Users";
+import { blogStore } from "../stores/BlogStore";
+import { useEffect } from "react";
 
 const BlogsByTagPage = () => {
   const { tag } = useParams();
 
-  const { data } = useQuery({
-    queryKey: ["blogsByTags", tag],
-    queryFn: () => blogService.getBlogsByTags(Number(tag)),
-    select: (data) => data,
-    enabled: !!tag,
-  });
+  useEffect(() => {
+    blogStore.getBlogs();
+  }, []);
+
+  const data = blogStore.getBlogsByTag(Number(tag));
 
   return (
     <div>
@@ -31,6 +32,7 @@ const BlogsByTagPage = () => {
                 blogId: blog.blog_id,
                 time: blog.created_at,
                 avatar_url: blog.avatar_url,
+                tags: blog.tags,
               }}
             />
           ))}

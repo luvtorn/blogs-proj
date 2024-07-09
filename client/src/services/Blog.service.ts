@@ -1,10 +1,12 @@
 import axios from "axios";
 import { User, Blog, Tags, BlogsResponse } from "../types/types";
+import { blogStore } from "../stores/BlogStore";
 
 class BlogService {
   async getBlogs(): Promise<Blog[]> {
     const url = "http://localhost:5000/blogs";
     const { data } = await axios.get<Blog[]>(url);
+    blogStore.setBlogs(data);
     return data;
   }
 

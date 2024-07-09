@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import "../styles/Users.scss";
 import { blogService } from "../services/Blog.service";
 import { useNavigate } from "react-router-dom";
+import { memo } from "react";
 
 const Users = () => {
   const navigate = useNavigate();
@@ -27,7 +28,14 @@ const Users = () => {
             key={user.id}
             onClick={() => navigate(`/profile/${user.id}`)}
           >
-            <img src="/avatar.svg" alt="avatar" />
+            <img
+              src={
+                user.avatar_url !== null
+                  ? `http://localhost:5000/${user.avatar_url}`
+                  : "/avatar.svg"
+              }
+              alt="avatar"
+            />
             <span className="user__name">{user.username}</span>
           </div>
         ))}
@@ -36,4 +44,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default memo(Users);

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { blogStore } from "../stores/BlogStore";
 import useHover from "../hooks/useHover";
 import useData from "../hooks/useData";
+import { Tags } from "../types/types";
 
 interface blogProp {
   blog: {
@@ -14,6 +15,7 @@ interface blogProp {
     authorId: number;
     blogId: number;
     avatar_url: string;
+    tags: Tags[];
   };
 }
 
@@ -61,6 +63,11 @@ const Blog: FC<blogProp> = ({ blog }) => {
         />
         <div className="blog__text">
           <h4>{blog.author}</h4>
+          <div className="blog-page__tags">
+            {blog?.tags.map((tag) => (
+              <p key={tag.id}>{tag.name}</p>
+            ))}
+          </div>
           <p>{useData(blog.time)}</p>
         </div>
       </div>

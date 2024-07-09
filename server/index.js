@@ -50,20 +50,34 @@ app.get("/profile/:id", async (req, res) => {
     const result = await pool.query(
       `
         SELECT 
-    users.id AS user_id, 
-    users.username,
-    users.avatar_url,
-    COUNT(blogs.id) AS blogs_count, 
-    json_agg(
-        json_build_object(
-            'id', blogs.id, 
-            'title', blogs.title, 
-            'content', blogs.content, 
-            'image_url', blogs.image_url, 
-            'created_at', blogs.created_at
-        )
-    ) AS blogs FROM users LEFT JOIN blogs ON blogs.user_id = users.id WHERE users.id = $1 GROUP BY users.id;
-      `,
+  users.id AS user_id, 
+  users.username,
+  users.avatar_url,
+  COUNT(blogs.id) AS blogs_count, 
+  json_agg(
+    json_build_object(
+      'id', blogs.id, 
+      'title', blogs.title, 
+      'content', blogs.content, 
+      'image_url', blogs.image_url, 
+      'created_at', blogs.created_at,
+      'tags', COALESCE(
+        (SELECT json_agg(
+                  json_build_object(
+                    'id', tags.id, 
+                    'name', tags.name
+                  )
+                )
+         FROM tags
+         JOIN blog_tags ON tags.id = blog_tags.tag_id
+         WHERE blog_tags.blog_id = blogs.id), '[]'
+      )
+    )
+  ) AS blogs 
+FROM users 
+LEFT JOIN blogs ON blogs.user_id = users.id 
+WHERE users.id = $1 
+GROUP BY users.id;`,
       [id]
     );
 
@@ -168,8 +182,8 @@ app.delete("/blog/:id", authenticateToken, async (req, res) => {
         .json({ error: "You are not authorized to delete this blog" });
     }
 
-    await client.query("DELETE FROM blogs WHERE id = $1", [id]);
     await client.query("DELETE FROM blog_tags WHERE blog_id = $1", [id]);
+    await client.query("DELETE FROM blogs WHERE id = $1", [id]);
 
     await client.query(`
       DELETE FROM tags
@@ -194,7 +208,7 @@ app.get("/blogs/tag/:id", async (req, res) => {
     const { id } = req.params;
 
     const blogsByTag = await pool.query(
-      `SELECT blogs.id AS blog_id, blogs.content, blogs.title, blogs.image_url, blogs.created_at, users.username, users.id AS user_id
+      `SELECT blogs.id AS blog_id, blogs.content, blogs.title, blogs.image_url, blogs.created_at, users.username, users.avatar_url, users.id AS user_id
       FROM blogs
       LEFT JOIN users ON blogs.user_id = users.id
       LEFT JOIN blog_tags ON blogs.id = blog_tags.blog_id
@@ -213,10 +227,33 @@ const generateToken = (user) => {
   return jwt.sign(user, process.env.JWT_SECRET, { expiresIn: "1h" });
 };
 
+app.post("/register", async (req, res) => {
+  const { userName, password } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  console.log(userName, password);
+
+  try {
+    const result = await pool.query(
+      "INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *",
+      [userName, hashedPassword]
+    );
+    const token = generateToken({
+      id: result.rows[0].id,
+      username: result.rows[0].username,
+    });
+    res.json({ token });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 app.post("/create", upload.single("image"), async (req, res) => {
   const { title, content, userId } = req.body;
   const image = req.file ? req.file.path : null;
   const tags = req.body.tags || [];
+
+  console.log(req.body);
 
   try {
     const result = await pool.query(
@@ -261,7 +298,9 @@ app.post("/create", upload.single("image"), async (req, res) => {
 
 app.get("/users", async (req, res) => {
   try {
-    const result = await pool.query("SELECT username, id FROM users");
+    const result = await pool.query(
+      "SELECT username, id, avatar_url FROM users"
+    );
 
     if (result.rows.length === 0) {
       return res.status(400).json({ error: "Error in getting users" });
@@ -288,7 +327,28 @@ app.get("/tags", async (req, res) => {
 app.get("/blogs", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT blogs.id AS blog_id, blogs.title, blogs.image_url, blogs.created_at, users.username, users.id AS user_id, users.avatar_url FROM blogs LEFT JOIN users ON blogs.user_id = users.id ORDER BY blogs.created_at DESC;"
+      `SELECT 
+  blogs.id AS blog_id,
+  blogs.title,
+  blogs.content,
+  blogs.image_url,
+  blogs.created_at,
+  users.username,
+  users.avatar_url,
+  users.id AS user_id,
+  COALESCE(json_agg(
+    json_build_object(
+      'id', tags.id,
+      'name', tags.name
+    )
+  ) FILTER (WHERE tags.id IS NOT NULL), '[]') AS tags
+FROM blogs
+LEFT JOIN users ON blogs.user_id = users.id
+LEFT JOIN blog_tags ON blogs.id = blog_tags.blog_id
+LEFT JOIN tags ON blog_tags.tag_id = tags.id
+GROUP BY blogs.id, users.username, users.id
+ORDER BY blogs.created_at DESC;
+`
     );
 
     if (result.rows.length === 0) {
@@ -306,7 +366,7 @@ app.get("/blog/:id", async (req, res) => {
     const { id } = req.params;
 
     const resultFromBlogs = await pool.query(
-      `SELECT blogs.id AS blog_id, blogs.content, blogs.title, blogs.image_url, blogs.created_at, users.username, users.id AS user_id FROM blogs LEFT JOIN users ON blogs.user_id = users.id WHERE blogs.id = $1;`,
+      `SELECT blogs.id AS blog_id, blogs.content, blogs.title, blogs.image_url, blogs.created_at, users.username, users.id AS user_id, users.avatar_url FROM blogs LEFT JOIN users ON blogs.user_id = users.id WHERE blogs.id = $1;`,
       [id]
     );
 

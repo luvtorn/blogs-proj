@@ -8,6 +8,7 @@ export interface Blog {
   created_at: string;
   username: string;
   avatar_url: string;
+  tags: Tags[];
 }
 
 export interface BlogsResponse {
@@ -18,6 +19,7 @@ export interface BlogsResponse {
 export interface User {
   id: number;
   username: string;
+  avatar_url: string;
 }
 
 export interface LoginResponse {

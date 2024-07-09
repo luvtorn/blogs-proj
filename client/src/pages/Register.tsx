@@ -14,6 +14,8 @@ const Login = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    console.log(userName);
+
     if (password === confPassword) {
       axios
         .post("http://localhost:5000/register", { userName, password })

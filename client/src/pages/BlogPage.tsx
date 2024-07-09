@@ -2,24 +2,19 @@ import ReactMarkdown from "react-markdown";
 import "../styles/BlogPage.scss";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { blogService } from "../services/Blog.service";
+import { observer } from "mobx-react-lite";
 import Header from "../components/Header";
 import useAuth from "../hooks/useAuth";
 import { blogStore } from "../stores/BlogStore";
 import useHover from "../hooks/useHover";
 import useData from "../hooks/useData";
 
-const BlogPage = () => {
+const BlogPage = observer(() => {
   const navigate = useNavigate();
   const { isHovered, mouseOut, mouseOver } = useHover();
   const { id } = useParams();
 
-  const { data } = useQuery({
-    queryKey: ["blog"],
-    queryFn: () => blogService.getBlog(Number(id)),
-    select: (data) => data,
-  });
+  const blog = blogStore.getBlogById(Number(id))?.[0];
 
   const handleDelete = blogStore.deleteBlog({ id: Number(id), navigate });
   const handleChange = blogStore.changeBlog({ id: Number(id), navigate });
@@ -35,12 +30,12 @@ const BlogPage = () => {
         </button>
         <div
           className="blog-page"
-          onMouseOver={() => mouseOver(data?.rows[0].user_id)}
+          onMouseOver={() => mouseOver(blog?.user_id)}
           onMouseOut={mouseOut}
         >
-          {data?.rows[0].image_url && (
+          {blog?.image_url && (
             <img
-              src={`http://localhost:5000/${data?.rows[0].image_url}`}
+              src={`http://localhost:5000/${blog?.image_url}`}
               alt="picture"
             />
           )}
@@ -57,28 +52,33 @@ const BlogPage = () => {
           )}
 
           <div className="blog-page__title">
-            <img src="/avatar.svg" alt="avatar" />
+            <img
+              src={`http://localhost:5000/${
+                blog?.avatar_url !== null ? blog?.avatar_url : "/avatar.svg"
+              }`}
+              alt="avatar"
+            />
             <div className="blog__text">
-              <h4>{data?.rows[0].username}</h4>
-              <p>{useData(data?.rows[0].created_at)}</p>
+              <h4>{blog?.username}</h4>
+              <p>{useData(blog?.created_at)}</p>
               <div className="blog-page__tags">
-                {data?.tags.map((tag) => (
+                {blog?.tags.map((tag) => (
                   <p key={tag.id}>{tag.name}</p>
                 ))}
               </div>
             </div>
           </div>
           <div className="blog-page__name">
-            <h3>{data?.rows[0].title}</h3>
+            <h3>{blog?.title}</h3>
           </div>
 
           <ReactMarkdown className="blog-page__content">
-            {data?.rows[0].content}
+            {blog?.content}
           </ReactMarkdown>
         </div>
       </div>
     </>
   );
-};
+});
 
 export default BlogPage;
