@@ -1,9 +1,13 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, toJS } from "mobx";
+import { User } from "../types/types";
 
 class AuthStore {
   isLoggedIn = false;
-  login = "";
-  userId = 0;
+  authUser: User | null = {
+    id: 0,
+    username: "",
+    avatar_url: "",
+  };
 
   constructor() {
     makeAutoObservable(this);
@@ -13,12 +17,8 @@ class AuthStore {
     this.isLoggedIn = isAuth;
   };
 
-  setUserId = (userId: number) => {
-    this.userId = userId;
-  };
-
-  setLogin = (login: string) => {
-    this.login = login;
+  setAuthUser = (user: User | null) => {
+    this.authUser = user;
   };
 }
 

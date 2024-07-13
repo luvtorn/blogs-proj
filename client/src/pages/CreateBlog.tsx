@@ -12,7 +12,7 @@ const CreateBlog = () => {
   const [tags, setTags] = useState<string[]>([]);
   const [content, setContent] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
-  const { isLoggedIn, userId } = authStore;
+  const { authUser } = authStore;
   const navigate = useNavigate();
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -32,7 +32,7 @@ const CreateBlog = () => {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", content);
-    formData.append("userId", String(userId));
+    formData.append("userId", String(authUser?.id));
     if (file) {
       formData.append("image", file);
     }

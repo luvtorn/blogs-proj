@@ -26,6 +26,7 @@ export interface LoginResponse {
   token: string;
   userId: number;
   userName: string;
+  avatar_url: string;
 }
 
 export interface TokenData {
@@ -33,6 +34,7 @@ export interface TokenData {
   iat: number;
   userId: number;
   username: string;
+  avatar_url: string;
 }
 
 export interface Tags {

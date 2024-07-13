@@ -6,7 +6,6 @@ import Users from "../components/Users";
 import { useQuery } from "@tanstack/react-query";
 import { blogService } from "../services/Blog.service";
 import useAuth from "../hooks/useAuth";
-import { blogStore } from "../stores/BlogStore";
 
 const Blogs = () => {
   const { getBlogs } = blogService;

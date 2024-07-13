@@ -1,6 +1,7 @@
 import axios from "axios";
 import { UserInfo } from "../types/types";
 import { userStore } from "../stores/UserStore";
+import authStore from "../stores/AuthStore";
 
 class UserService {
   async getUserInfo(id: number): Promise<UserInfo[] | undefined> {
@@ -34,6 +35,14 @@ class UserService {
           Authorization: `Bearer ${token}`,
         },
       });
+      authStore.setAuthUser({
+        avatar_url: currentImageUrl,
+        id: id,
+        username: username,
+      });
+      console.log(response.data);
+      localStorage.setItem("token", response.data.token);
+
       return response.data;
     } catch (error) {
       console.error(error);

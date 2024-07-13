@@ -105,7 +105,13 @@ app.put(
       [username, imageUrl, id]
     );
 
-    res.json(result);
+    const newToken = jwt.sign(
+      { userId: id, username, avatar_url: imageUrl },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.json({ result, token: newToken });
   }
 );
 
@@ -408,8 +414,18 @@ app.post("/login", async (req, res) => {
       return res.status(400).json({ error: "Invalid credentials" });
     }
 
-    const token = generateToken({ userId: user.id, username: user.username });
-    res.json({ token, userName: user.username, userId: user.id });
+    const token = generateToken({
+      userId: user.id,
+      username: user.username,
+      avatar_url: user.avatar_url,
+    });
+
+    res.json({
+      token,
+      userName: user.username,
+      userId: user.id,
+      avatar_url: user.avatar_url,
+    });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

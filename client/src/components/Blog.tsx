@@ -1,4 +1,4 @@
-import { FC, memo } from "react";
+import { FC, memo, MouseEvent, useState } from "react";
 import "../styles/Blog.scss";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,10 @@ import { blogStore } from "../stores/BlogStore";
 import useHover from "../hooks/useHover";
 import useData from "../hooks/useData";
 import { Tags } from "../types/types";
+import { HeartTwoTone } from "@ant-design/icons";
+import Icon from "@ant-design/icons/lib/components/Icon";
+import RedHeartSvg from "./RedHeartSvg";
+import GreyHeartSvg from "./GreyHeartSvg";
 
 interface blogProp {
   blog: {
@@ -22,6 +26,7 @@ interface blogProp {
 const Blog: FC<blogProp> = ({ blog }) => {
   const navigate = useNavigate();
   const { mouseOver, mouseOut, isHovered } = useHover();
+  const [isLiked, setIsLiked] = useState(false);
 
   const openBlogInfo = () => {
     navigate(`/blog/${blog.blogId}`);
@@ -35,6 +40,20 @@ const Blog: FC<blogProp> = ({ blog }) => {
     id: Number(blog.blogId),
     navigate,
   });
+
+  const handleLike = (
+    e: MouseEvent<HTMLSpanElement, globalThis.MouseEvent>
+  ) => {
+    e.stopPropagation();
+    setIsLiked(true);
+  };
+
+  const handleDeleteLike = (
+    e: MouseEvent<HTMLSpanElement, globalThis.MouseEvent>
+  ) => {
+    e.stopPropagation();
+    setIsLiked(false);
+  };
 
   return (
     <div
@@ -73,6 +92,13 @@ const Blog: FC<blogProp> = ({ blog }) => {
       </div>
       <div className="blog__name">
         <h3>{blog.title}</h3>
+      </div>
+      <div className="blog__footer">
+        {isLiked ? (
+          <Icon component={RedHeartSvg} onClick={(e) => handleDeleteLike(e)} />
+        ) : (
+          <Icon component={GreyHeartSvg} onClick={(e) => handleLike(e)} />
+        )}
       </div>
     </div>
   );

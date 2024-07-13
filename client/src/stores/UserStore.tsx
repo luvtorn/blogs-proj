@@ -1,5 +1,7 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, toJS } from "mobx";
 import { NavigateFunction } from "react-router-dom";
+import { User, UserInfo } from "../types/types";
+import { userService } from "../services/User.service";
 
 interface UserStoreParams {
   id: number;

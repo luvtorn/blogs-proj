@@ -7,6 +7,8 @@ import Blog from "../components/Blog";
 import "../styles/ProfilePage.scss";
 import { FormEvent, useEffect, useState } from "react";
 import useFile from "../hooks/useFile";
+import { userStore } from "../stores/UserStore";
+import authStore from "../stores/AuthStore";
 
 const ChangeUserInfo = () => {
   const [username, setUsername] = useState<string>("");
@@ -23,8 +25,6 @@ const ChangeUserInfo = () => {
     enabled: !!id,
   });
 
-  console.log(data);
-
   useEffect(() => {
     if (data) {
       setUsername(data[0].username);
@@ -36,6 +36,12 @@ const ChangeUserInfo = () => {
     e.preventDefault();
     try {
       await userService.changeUser(Number(id), username, file, currentImageUrl);
+
+      authStore.setAuthUser({
+        id: Number(id),
+        username,
+        avatar_url: currentImageUrl,
+      });
       navigate(-1);
     } catch (error) {
       console.log(error);

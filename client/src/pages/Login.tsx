@@ -11,7 +11,7 @@ const Login = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { setLoggedIn, setLogin, setUserId } = authStore;
+  const { setLoggedIn, setAuthUser } = authStore;
   const navigate = useNavigate();
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -26,8 +26,11 @@ const Login = () => {
         const { token } = response.data;
         blogService.saveTokenToLocalStorage(token);
         setLoggedIn(true);
-        setLogin(response.data.userName);
-        setUserId(response.data.userId);
+        setAuthUser({
+          id: response.data.userId,
+          avatar_url: response.data.avatar_url,
+          username: response.data.userName,
+        });
         navigate("/");
       })
       .catch((error: AxiosError<{ error: string }>) => {
