@@ -16,9 +16,9 @@ const Blogs = () => {
     select: (data) => data,
   });
 
-  console.log(data);
-
   useAuth();
+
+  console.log(data);
 
   return (
     <div>
@@ -36,6 +36,8 @@ const Blogs = () => {
                 blogId: blog.blog_id,
                 time: blog.created_at,
                 avatar_url: blog.avatar_url,
+                image_url: blog.image_url,
+                views_count: blog.views_count,
               }}
             />
           ))}

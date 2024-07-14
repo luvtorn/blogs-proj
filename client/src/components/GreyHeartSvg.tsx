@@ -1,8 +1,8 @@
 const GreyHeartSvg = () => (
   <svg
-    width="1.8em"
+    width="1.4em"
     style={{ margin: "10px 0 0 50px" }}
-    height="1.8em"
+    height="1.4em"
     fill="grey"
     viewBox="0 0 1024 1024"
   >

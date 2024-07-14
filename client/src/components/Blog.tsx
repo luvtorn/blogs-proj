@@ -1,15 +1,16 @@
 import { FC, memo, MouseEvent, useState } from "react";
 import "../styles/Blog.scss";
+import { FaEye } from "react-icons/fa";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { blogStore } from "../stores/BlogStore";
 import useHover from "../hooks/useHover";
 import useData from "../hooks/useData";
 import { Tags } from "../types/types";
-import { HeartTwoTone } from "@ant-design/icons";
 import Icon from "@ant-design/icons/lib/components/Icon";
 import RedHeartSvg from "./RedHeartSvg";
 import GreyHeartSvg from "./GreyHeartSvg";
+import { blogService } from "../services/Blog.service";
 
 interface blogProp {
   blog: {
@@ -20,6 +21,8 @@ interface blogProp {
     blogId: number;
     avatar_url: string;
     tags: Tags[];
+    image_url: string;
+    views_count: number;
   };
 }
 
@@ -29,6 +32,7 @@ const Blog: FC<blogProp> = ({ blog }) => {
   const [isLiked, setIsLiked] = useState(false);
 
   const openBlogInfo = () => {
+    blogService.updateViewsCount(blog.blogId);
     navigate(`/blog/${blog.blogId}`);
   };
 
@@ -62,6 +66,9 @@ const Blog: FC<blogProp> = ({ blog }) => {
       onMouseOut={() => mouseOut()}
       onClick={openBlogInfo}
     >
+      {blog.image_url && (
+        <img src={`http://localhost:5000/${blog.image_url}`} alt="preview" />
+      )}
       {isHovered && (
         <div className="blog__edit-btns">
           <button onClick={handleChange}>
@@ -99,6 +106,11 @@ const Blog: FC<blogProp> = ({ blog }) => {
         ) : (
           <Icon component={GreyHeartSvg} onClick={(e) => handleLike(e)} />
         )}
+
+        <p>
+          {blog.views_count}
+          <FaEye />
+        </p>
       </div>
     </div>
   );

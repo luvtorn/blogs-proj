@@ -90,6 +90,8 @@ const ProfilePage = observer(() => {
                         time: blog.created_at,
                         avatar_url: data[0].avatar_url,
                         tags: blog.tags,
+                        image_url: blog.image_url,
+                        views_count: blog.views_count,
                       }}
                     />
                   ))

@@ -115,6 +115,8 @@ const ChangeUserInfo = () => {
                       time: blog.created_at,
                       avatar_url: blog.avatar_url,
                       tags: blog.tags,
+                      image_url: blog.image_url,
+                      views_count: blog.views_count,
                     }}
                   />
                 ))

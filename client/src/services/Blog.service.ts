@@ -71,6 +71,16 @@ class BlogService {
     }
   }
 
+  async updateViewsCount(blog_id: number) {
+    const url = `http://localhost:5000/update-views/${blog_id}`;
+    try {
+      const response = axios.put(url);
+      return response;
+    } catch (error) {
+      console.log(error, "failed to update views count");
+    }
+  }
+
   async getTags(): Promise<Tags[]> {
     const url = "http://localhost:5000/tags";
     const { data } = await axios.get<Tags[]>(url);

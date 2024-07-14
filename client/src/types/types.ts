@@ -9,6 +9,7 @@ export interface Blog {
   username: string;
   avatar_url: string;
   tags: Tags[];
+  views_count: number;
 }
 
 export interface BlogsResponse {
