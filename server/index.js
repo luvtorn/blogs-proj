@@ -59,6 +59,7 @@ app.get("/profile/:id", async (req, res) => {
       'id', blogs.id, 
       'title', blogs.title, 
       'content', blogs.content, 
+      'views_count', blogs.views_count,
       'image_url', blogs.image_url, 
       'created_at', blogs.created_at,
       'tags', COALESCE(
@@ -339,6 +340,7 @@ app.get("/blogs", async (req, res) => {
   blogs.content,
   blogs.image_url,
   blogs.created_at,
+  blogs.views_count,
   users.username,
   users.avatar_url,
   users.id AS user_id,
@@ -391,6 +393,20 @@ app.get("/blog/:id", async (req, res) => {
     res.json({ ...resultFromBlogs, tags: resultFromTags.rows });
   } catch (e) {
     console.log(e);
+  }
+});
+
+app.put("/update-views/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const response = await pool.query(
+      "UPDATE blogs SET views_count = views_count + 1 WHERE id = $1",
+      [id]
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
   }
 });
 

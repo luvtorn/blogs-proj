@@ -7,7 +7,8 @@ import Header from "../components/Header";
 import useAuth from "../hooks/useAuth";
 import { blogStore } from "../stores/BlogStore";
 import useHover from "../hooks/useHover";
-import useData from "../hooks/useData";
+import BlogTitle from "../components/BlogTitle";
+import Comments from "../components/Comments";
 
 const BlogPage = observer(() => {
   const navigate = useNavigate();
@@ -21,6 +22,10 @@ const BlogPage = observer(() => {
 
   useAuth();
 
+  if (!blog) {
+    return <h2>Loading...</h2>;
+  }
+
   return (
     <>
       <Header />
@@ -30,13 +35,14 @@ const BlogPage = observer(() => {
         </button>
         <div
           className="blog-page"
-          onMouseOver={() => mouseOver(blog?.user_id)}
+          onMouseOver={() => mouseOver(blog.user_id)}
           onMouseOut={mouseOut}
         >
-          {blog?.image_url && (
+          {blog.image_url && (
             <img
-              src={`http://localhost:5000/${blog?.image_url}`}
+              src={`http://localhost:5000/${blog.image_url}`}
               alt="picture"
+              style={{ borderRadius: "10px" }}
             />
           )}
 
@@ -50,31 +56,24 @@ const BlogPage = observer(() => {
               </button>
             </div>
           )}
+          <BlogTitle
+            blog={{
+              author: blog.username,
+              avatar_url: blog.avatar_url,
+              created_at: blog.created_at,
+              tags: blog.tags,
+              title: blog.title,
+            }}
+          />
 
-          <div className="blog-page__title">
-            <img
-              src={`http://localhost:5000/${
-                blog?.avatar_url !== null ? blog?.avatar_url : "/avatar.svg"
-              }`}
-              alt="avatar"
-            />
-            <div className="blog__text">
-              <h4>{blog?.username}</h4>
-              <p>{useData(blog?.created_at)}</p>
-              <div className="blog-page__tags">
-                {blog?.tags.map((tag) => (
-                  <p key={tag.id}>{tag.name}</p>
-                ))}
-              </div>
-            </div>
-          </div>
           <div className="blog-page__name">
-            <h3>{blog?.title}</h3>
+            <h3>{blog.title}</h3>
           </div>
 
           <ReactMarkdown className="blog-page__content">
-            {blog?.content}
+            {blog.content}
           </ReactMarkdown>
+          <Comments />
         </div>
       </div>
     </>

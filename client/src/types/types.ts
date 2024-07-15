@@ -50,3 +50,27 @@ export interface UserInfo {
   blogs_count: number;
   blogs: Blog[];
 }
+
+export interface BlogProp {
+  blog: {
+    title: string;
+    created_at: string;
+    author: string;
+    authorId: number;
+    blogId: number;
+    avatar_url: string;
+    tags: Tags[];
+    image_url: string;
+    views_count: number;
+  };
+}
+
+export interface BlogTitleProp {
+  blog: {
+    avatar_url: string;
+    title: string;
+    created_at: string;
+    author: string;
+    tags: Tags[];
+  };
+}

@@ -34,7 +34,7 @@ const Blogs = () => {
                 author: blog.username,
                 authorId: blog.user_id,
                 blogId: blog.blog_id,
-                time: blog.created_at,
+                created_at: blog.created_at,
                 avatar_url: blog.avatar_url,
                 image_url: blog.image_url,
                 views_count: blog.views_count,

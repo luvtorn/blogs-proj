@@ -87,7 +87,7 @@ const ProfilePage = observer(() => {
                         author: data[0].username,
                         authorId: data[0].user_id,
                         blogId: blog.id,
-                        time: blog.created_at,
+                        created_at: blog.created_at,
                         avatar_url: data[0].avatar_url,
                         tags: blog.tags,
                         image_url: blog.image_url,

@@ -19,9 +19,13 @@ const Header = observer(() => {
 
         <div className="buttons">
           {isLoggedIn && (
-            <button className="create">
-              <Link to="/create">Write a blog</Link>
-            </button>
+            <Link
+              to="/create"
+              className="create"
+              style={{ textDecoration: "none" }}
+            >
+              Write a blog
+            </Link>
           )}
           {isLoggedIn && authUser ? (
             <div
@@ -40,9 +44,13 @@ const Header = observer(() => {
               <span className="user__name">{authUser.username}</span>
             </div>
           ) : (
-            <button className="login-btn">
-              <Link to="/login">Login</Link>
-            </button>
+            <Link
+              to="/login"
+              className="login-btn"
+              style={{ textDecoration: "none" }}
+            >
+              Login
+            </Link>
           )}
         </div>
       </div>

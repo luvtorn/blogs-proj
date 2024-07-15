@@ -19,7 +19,8 @@
       width: 100%;
     }
 
-    button {
+    button,
+    a {
       border-radius: 20px;
       border: 1px solid #ff4b2b;
       background-color: rgb(255, 0, 0);
@@ -28,6 +29,7 @@
       font-weight: bold;
       padding: 12px 45px;
       letter-spacing: 1px;
+      text-decoration: none;
       text-transform: uppercase;
       transition: transform 80ms ease-in;
       transition: background 0.2s ease-in;

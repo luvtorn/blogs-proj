@@ -1,6 +1,5 @@
 .blog {
   position: relative;
-  width: 100%;
   background-color: #fff;
   padding: 25px 30px;
   border-radius: 8px;
@@ -8,7 +7,7 @@
   transition: all 0.1s ease-out;
 
   img {
-    width: 100%;
+    width: 30vw;
     border-radius: 10px;
     margin-bottom: 10px;
   }
@@ -48,8 +47,8 @@
   &__title {
     display: flex;
 
-    img {
-      width: 45px;
+    .blog__avatar {
+      width: 50px;
       height: 45px;
       border-radius: 50%;
       object-fit: cover;
