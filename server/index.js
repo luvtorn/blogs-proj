@@ -43,6 +43,21 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
+app.post("/comments", async (req, res) => {
+  const { blogId, userId, comment } = req.body;
+
+  try {
+    const result = await pool.query(
+      "INSERT INTO comments (blog_id, user_id, content) VALUES($1, $2, $3)",
+      [blogId, userId, comment]
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 app.get("/profile/:id", async (req, res) => {
   const { id } = req.params;
 

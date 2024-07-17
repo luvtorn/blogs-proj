@@ -4,7 +4,7 @@
   background-color: #fff;
   padding: 25px 30px;
   border-radius: 8px;
-  box-shadow: 1px 1px 4px 1px #707070;
+  border-bottom: 2px solid #333;
   transition: all 0.1s ease-out;
 
   img {
@@ -72,6 +72,9 @@
 
 .blog-page-container {
   display: block;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 1px 1px 4px 1px #707070;
 
   .back {
     text-decoration: none;

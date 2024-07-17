@@ -73,8 +73,8 @@ const BlogPage = observer(() => {
           <ReactMarkdown className="blog-page__content">
             {blog.content}
           </ReactMarkdown>
-          <Comments />
         </div>
+        <Comments blogId={blog.blog_id} />
       </div>
     </>
   );

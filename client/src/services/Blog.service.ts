@@ -97,6 +97,16 @@ class BlogService {
     }
   }
 
+  async sendComment(userId: number, blogId: number, comment: string) {
+    try {
+      const url = "http://localhost:5000/comments";
+      const result = await axios.post(url, { userId, blogId, comment });
+      console.log(result);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   saveTokenToLocalStorage = (token: string) => {
     localStorage.setItem("token", token);
   };
