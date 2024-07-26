@@ -5,7 +5,6 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const pool = require("./db");
 const multer = require("multer");
-const PORT = 5000;
 
 const app = express();
 app.use(bodyParser.json());
@@ -45,11 +44,29 @@ const authenticateToken = (req, res, next) => {
 
 app.post("/comments", async (req, res) => {
   const { blogId, userId, comment } = req.body;
+  console.log(blogId, userId, comment);
 
   try {
     const result = await pool.query(
-      "INSERT INTO comments (blog_id, user_id, content) VALUES($1, $2, $3)",
+      "INSERT INTO comments (blog_id, user_id, content) VALUES($1, $2, $3) RETURNING *",
       [blogId, userId, comment]
+    );
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get("/comments/:blogId", async (req, res) => {
+  const { blogId } = req.params;
+
+  console.log(blogId);
+
+  try {
+    const result = await pool.query(
+      "SELECT comments.id, comments.content, users.id as user_id, users.username, users.avatar_url FROM comments LEFT JOIN users ON users.id = comments.user_id WHERE comments.blog_id = $1",
+      [blogId]
     );
 
     res.json(result.rows);
@@ -136,6 +153,7 @@ app.put(
   authenticateToken,
   upload.single("image"),
   async (req, res) => {
+    const client = await pool.connect();
     try {
       const { id } = req.params;
       const { title, content, image_url, tags } = req.body;
@@ -145,22 +163,24 @@ app.put(
         imageUrl = req.file.path;
       }
 
-      const result = await pool.query(
+      await client.query("BEGIN"); // Начинаем транзакцию
+
+      const result = await client.query(
         "UPDATE blogs SET title = $1, content = $2, image_url = $3 WHERE id = $4 RETURNING *",
         [title, content, imageUrl, id]
       );
 
-      await pool.query("DELETE FROM blog_tags WHERE blog_id = $1", [id]);
+      await client.query("DELETE FROM blog_tags WHERE blog_id = $1", [id]);
 
       const tagsArray = JSON.parse(tags);
 
       for (const tag of tagsArray) {
-        let result = await pool.query("SELECT id FROM tags WHERE name = $1", [
+        let result = await client.query("SELECT id FROM tags WHERE name = $1", [
           tag,
         ]);
         let tagId;
         if (result.rows.length === 0) {
-          result = await pool.query(
+          result = await client.query(
             "INSERT INTO tags (name) VALUES ($1) RETURNING id",
             [tag]
           );
@@ -168,16 +188,32 @@ app.put(
         } else {
           tagId = result.rows[0].id;
         }
-        await pool.query(
+        await client.query(
           "INSERT INTO blog_tags (blog_id, tag_id) VALUES ($1, $2)",
           [id, tagId]
         );
       }
 
+      await client.query(
+        `
+        DELETE FROM tags
+        WHERE id IN (
+          SELECT t.id
+          FROM tags t
+          LEFT JOIN blog_tags bt ON t.id = bt.tag_id
+          WHERE bt.tag_id IS NULL
+        )
+      `
+      );
+
+      await client.query("COMMIT"); // Фиксируем транзакцию
       res.json(result.rows[0]);
     } catch (err) {
+      await client.query("ROLLBACK"); // Откатываем транзакцию при ошибке
       console.error(err);
       res.status(500).json({ error: "Internal server error" });
+    } finally {
+      client.release();
     }
   }
 );
@@ -203,7 +239,7 @@ app.delete("/blog/:id", authenticateToken, async (req, res) => {
         .status(403)
         .json({ error: "You are not authorized to delete this blog" });
     }
-
+    await client.query("DELETE FROM comments WHERE blog_id = $1", [id]);
     await client.query("DELETE FROM blog_tags WHERE blog_id = $1", [id]);
     await client.query("DELETE FROM blogs WHERE id = $1", [id]);
 
@@ -462,4 +498,6 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(5000, "0.0.0.0", () => {
+  console.log("Server is running on port 5000");
+});

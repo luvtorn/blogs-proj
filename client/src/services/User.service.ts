@@ -2,11 +2,12 @@ import axios from "axios";
 import { UserInfo } from "../types/types";
 import { userStore } from "../stores/UserStore";
 import authStore from "../stores/AuthStore";
+import {localUrl} from "../services/api";
 
 class UserService {
   async getUserInfo(id: number): Promise<UserInfo[] | undefined> {
     try {
-      const url = `http://localhost:5000/profile/${id}`;
+      const url = `${localUrl}/profile/${id}`;
       const { data } = await axios.get<UserInfo[]>(url);
       return data;
     } catch (error) {
@@ -26,7 +27,7 @@ class UserService {
       currentImageUrl
     );
 
-    const url = `http://localhost:5000/changeUser/${id}`;
+    const url = `${localUrl}/changeUser/${id}`;
     const token = localStorage.getItem("token");
 
     try {

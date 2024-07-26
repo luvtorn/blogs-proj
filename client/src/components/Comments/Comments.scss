@@ -1,0 +1,96 @@
+.comments {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 8px;
+
+  &__items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .comment {
+      border: 1.5px solid #333;
+      padding: 10px;
+      border-radius: 10px;
+
+      &__text {
+        margin-left: 60px;
+        margin-top: 5px;
+      }
+
+      &__user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 20%;
+        padding: 8px 10px;
+        border-radius: 8px;
+        transition: background 0.1s ease-in-out;
+
+        &:hover {
+          background-color: #ccc;
+        }
+
+        img {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+
+        h4 {
+          font-size: 15px;
+        }
+      }
+    }
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: row;
+    height: 50px;
+    align-items: center;
+    margin-top: 30px;
+
+    button {
+      height: 100%;
+      padding: 7px 20px;
+      background-color: #4874ee;
+      border: none;
+      outline: none;
+      border-bottom-right-radius: 10px;
+      border-top-right-radius: 10px;
+      transition: background 0.1s ease-in;
+      border: 1px solid #333;
+      border-left: none;
+      position: relative;
+
+      svg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      &:hover {
+        background-color: #5381ff;
+      }
+    }
+
+    .input-comment {
+      height: 100%;
+      width: 100%;
+      resize: none;
+      overflow: hidden;
+      outline: none;
+      padding: 7px;
+      border: 1px solid #333;
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+      font-size: 16px;
+      resize: none;
+      overflow: auto;
+    }
+  }
+}

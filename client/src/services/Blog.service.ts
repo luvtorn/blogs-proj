@@ -1,41 +1,50 @@
-import axios from "axios";
-import { User, Blog, Tags, BlogsResponse } from "../types/types";
-import { blogStore } from "../stores/BlogStore";
+import { User, Blog, Tags, BlogsResponse, Comment } from "../types/types";
+import { api } from "./api";
 
 class BlogService {
   async getBlogs(): Promise<Blog[]> {
-    const url = "http://localhost:5000/blogs";
-    const { data } = await axios.get<Blog[]>(url);
-    blogStore.setBlogs(data);
-    return data;
+    try {
+      const { data } = await api.get<Blog[]>("/blogs");
+      return data;
+    } catch (error) {
+      console.error("Failed to fetch blogs:", error);
+      throw error;
+    }
   }
 
   async getBlog(id: number): Promise<BlogsResponse> {
-    const url = `http://localhost:5000/blog/${id}`;
-    const { data } = await axios.get<BlogsResponse>(url);
-    return data;
+    try {
+      const { data } = await api.get<BlogsResponse>(`/blog/${id}`);
+      return data;
+    } catch (error) {
+      console.error(`Failed to fetch blog with id ${id}:`, error);
+      throw error;
+    }
   }
 
   async deleteBlog(id: number) {
-    const url = `http://localhost:5000/blog/${id}`;
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.delete(url, {
+      const response = await api.delete(`/blog/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
       console.log(response);
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.error(`Failed to delete blog with id ${id}:`, error);
     }
   }
 
   async getUsers(): Promise<User[]> {
-    const url = "http://localhost:5000/users";
-    const { data } = await axios.get<User[]>(url);
-    return data;
+    try {
+      const { data } = await api.get<User[]>("/users");
+      return data;
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+      throw error;
+    }
   }
 
   async changeBlog(
@@ -56,60 +65,75 @@ class BlogService {
       formData.append("image_url", currentImageUrl);
     }
 
-    const url = `http://localhost:5000/change/${id}`;
-    const token = localStorage.getItem("token");
-
     try {
-      const response = await axios.put(url, formData, {
+      const token = localStorage.getItem("token");
+      const { data } = await api.put(`/change/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      return response.data;
+      return data;
     } catch (error) {
-      console.error(error);
+      console.error(`Failed to change blog with id ${id}:`, error);
+      throw error;
     }
   }
 
   async updateViewsCount(blog_id: number) {
-    const url = `http://localhost:5000/update-views/${blog_id}`;
     try {
-      const response = await axios.put(url);
+      const response = await api.put(`/update-views/${blog_id}`);
       return response;
     } catch (error) {
-      console.log(error, "failed to update views count");
+      console.error(
+        `Failed to update views count for blog with id ${blog_id}:`,
+        error
+      );
     }
   }
 
   async getTags(): Promise<Tags[]> {
-    const url = "http://localhost:5000/tags";
-    const { data } = await axios.get<Tags[]>(url);
-    return data;
+    try {
+      const { data } = await api.get<Tags[]>("/tags");
+      return data;
+    } catch (error) {
+      console.error("Failed to fetch tags:", error);
+      throw error;
+    }
   }
 
   async getBlogsByTags(id: number): Promise<Blog[] | undefined> {
     try {
-      const url = `http://localhost:5000/blogs/tag/${id}`;
-      const { data } = await axios.get<Blog[]>(url);
+      const { data } = await api.get<Blog[]>(`/blogs/tag/${id}`);
       return data;
     } catch (error) {
-      console.log(error);
+      console.error(`Failed to fetch blogs by tag id ${id}:`, error);
     }
   }
 
-  async sendComment(userId: number, blogId: number, comment: string) {
+  async getComments(blogId: number): Promise<Comment[] | undefined> {
     try {
-      const url = "http://localhost:5000/comments";
-      const result = await axios.post(url, { userId, blogId, comment });
-      console.log(result);
+      const { data } = await api.get<Comment[]>(`/comments/${blogId}`);
+      return data;
     } catch (error) {
-      console.log(error);
+      console.error(
+        `Failed to fetch comments for blog with id ${blogId}:`,
+        error
+      );
     }
   }
 
-  saveTokenToLocalStorage = (token: string) => {
+  async sendComment(blogId: number, userId: number, comment: string) {
+    try {
+      const result = await api.post("/comments", { blogId, userId, comment });
+      return result;
+    } catch (error) {
+      console.error("Failed to send comment:", error);
+    }
+  }
+
+  saveTokenToLocalStorage(token: string) {
     localStorage.setItem("token", token);
-  };
+  }
 }
 
 export const blogService = new BlogService();

@@ -1,4 +1,4 @@
-export interface Blog {
+export interface Blog extends Tags {
   blog_id: number;
   id: number;
   user_id: number;
@@ -73,4 +73,9 @@ export interface BlogTitleProp {
     author: string;
     tags: Tags[];
   };
+}
+
+export interface Comment extends UserInfo {
+  content: string;
+  id: number;
 }

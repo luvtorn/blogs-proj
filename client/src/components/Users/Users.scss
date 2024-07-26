@@ -1,0 +1,29 @@
+.users {
+  background-color: #fff;
+  padding: 15px 10px;
+  border-radius: 8px;
+
+  .user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px;
+    border-radius: 8px;
+    transition: background 0.1s ease-in-out;
+
+    img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    &__name {
+      font-size: 0.8em;
+    }
+  }
+
+  .user:hover {
+    background-color: #ccc;
+  }
+}

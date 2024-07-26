@@ -1,0 +1,18 @@
+.tags {
+  background-color: #fff;
+  padding: 15px 20px;
+  border-radius: 8px;
+
+  .tag {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 8px;
+    margin-bottom: 5px;
+    transition: background 0.1s ease-in-out;
+  }
+
+  .tag:hover {
+    background-color: #ccc;
+  }
+}
