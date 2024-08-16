@@ -39,7 +39,7 @@ const BlogPage = observer(() => {
 					onMouseOver={() => mouseOver(blog.user_id)}
 					onMouseOut={mouseOut}
 				>
-					{blog.image_url && (
+					{blog.image_url && blog.image_url !== 'null' && (
 						<img
 							src={`${localUrl}/${blog.image_url}`}
 							alt='blog'

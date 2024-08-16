@@ -2,6 +2,7 @@ import axios from 'axios'
 import { FormEvent } from 'react'
 import { NavigateFunction } from 'react-router-dom'
 import { localUrl } from '../../services/api'
+import { blogStore } from '../../stores/BlogStore'
 
 export const createBlogAction = async (
 	e: FormEvent<HTMLFormElement>,
@@ -33,11 +34,13 @@ export const createBlogAction = async (
 		})
 
 	try {
-		await axios.post(`${localUrl}/create`, formData, {
+		await axios.post(`${localUrl}/blogs/create`, formData, {
 			headers: {
 				'Content-Type': 'multipart/form-data',
 			},
 		})
+
+		blogStore.loadBlogs()
 
 		navigate('/')
 	} catch (err) {

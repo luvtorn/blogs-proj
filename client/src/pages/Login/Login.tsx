@@ -15,15 +15,16 @@ const Login = () => {
 	const { setLoggedIn, setAuthUser } = authStore
 	const navigate = useNavigate()
 
-	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 
-		axios
-			.post<LoginResponse>(`${localUrl}/login`, {
+		await axios.post<LoginResponse>(`${localUrl}/login`, {
 				userName,
 				password,
 			})
 			.then(response => {
+				
+
 				const { token } = response.data
 				blogService.saveTokenToLocalStorage(token)
 				setLoggedIn(true)

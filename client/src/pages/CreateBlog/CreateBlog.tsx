@@ -41,9 +41,10 @@ const CreateBlog = () => {
 						type='file'
 						id='add-blog__file'
 						hidden
+						autoFocus
 						onChange={handleFileChange}
 					/>
-					<label htmlFor='add-blog__file' className='add-blog__file'>
+					<label htmlFor='add-blog__file' className='add-blog__file' autoFocus>
 						Upload Preview
 					</label>
 

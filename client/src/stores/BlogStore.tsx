@@ -18,7 +18,7 @@ class BlogStore {
 	}
 
 	async loadBlogs() {
-		this.blogs = await blogService.getBlogs()
+		this.blogs = await blogService.getBlogs(null)
 	}
 
 	getBlogs = () => {

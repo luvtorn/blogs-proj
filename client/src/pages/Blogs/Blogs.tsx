@@ -6,15 +6,25 @@ import Users from '../../components/Users/Users'
 import useAuth from '../../hooks/useAuth'
 import { blogService } from '../../services/Blog.service'
 import './Blogs.scss'
+import Tabs from '../../components/Tabs/Tabs'
+import { useSearchParams } from 'react-router-dom'
+import { useEffect } from 'react'
 
 const Blogs = () => {
 	const { getBlogs } = blogService
+	const [searchParams] = useSearchParams()
 
-	const { data } = useQuery({
+	const querySortParam = searchParams.get('sortBy')
+
+	const { data, refetch } = useQuery({
 		queryKey: ['blogs'],
-		queryFn: () => getBlogs(),
+		queryFn: () => getBlogs(querySortParam),
 		select: data => data,
 	})
+
+	useEffect(() => {
+		refetch()
+	}, [querySortParam, refetch, data])
 
 	useAuth()
 
@@ -23,6 +33,7 @@ const Blogs = () => {
 			<Header />
 			<div className='container'>
 				<div className='blogs'>
+					<Tabs />
 					{data?.map(blog => (
 						<Blog
 							key={blog.blog_id}

@@ -32,12 +32,13 @@ const ChangeBlog = () => {
 			)
 			setCurrentImageUrl(data[0].image_url)
 		}
-	}, [data])
+	}, [])
 
 	useAuth()
 
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
+
 		try {
 			await blogService.changeBlog(
 				Number(id),

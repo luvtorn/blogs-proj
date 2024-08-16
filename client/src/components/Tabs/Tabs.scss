@@ -1,0 +1,27 @@
+.tabs {
+	display: flex;
+	width: 30%;
+	margin: 0 auto;
+	align-items: center;
+	justify-content: center;
+	list-style-type: none;
+	border-bottom: 1px solid rgba(58, 58, 58, 0.449);
+
+	.active {
+		border-bottom: 1px solid black;
+	}
+
+	li {
+		padding: 5px 15px;
+		border-radius: 5px;
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+		border-bottom: 1px solid transparent;
+		transition: background 0.1s ease-in;
+		transition: border 0.3s ease-in;
+
+		&:hover {
+			background: #67676760;
+		}
+	}
+}

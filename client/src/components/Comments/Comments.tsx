@@ -71,7 +71,11 @@ const Comments = ({ blogId }: CommentsProps) => {
 								onClick={() => navigate(`/profile/${comment.user_id}`)}
 							>
 								<img
-									src={`${localUrl}/${comment.avatar_url}`}
+									src={
+										comment.avatar_url
+											? `${localUrl}/${comment.avatar_url}`
+											: '/avatar.svg'
+									}
 									className='blog__avatar'
 									alt='avatar'
 								/>

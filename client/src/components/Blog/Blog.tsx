@@ -28,7 +28,7 @@ const Blog: FC<BlogProp> = ({ blog }) => {
 			onMouseOut={() => mouseOut()}
 			onClick={() => openBlogInfo(blog.blogId)}
 		>
-			{blog.image_url && (
+			{blog.image_url && blog.image_url !== 'null' && (
 				<img src={`${localUrl}/${blog.image_url}`} alt='preview' />
 			)}
 
